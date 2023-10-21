@@ -1,0 +1,71 @@
+q3
+
+/*
+3.
+For each religion return the number of countries where it occurs; order them in decreasing number 
+of countries. Name your output attributes religion, num_countries. [Result size: 37 of 
+{"religion':..., "num_countries":...} (order of keys can differ)]
+*/
+
+SELECT R.`#text` AS religion, COUNT(C.name) AS num_countries
+FROM geo.world as W, W.mondial.country as C, 
+	CASE WHEN C.religions IS MISSING THEN []
+         WHEN IS_ARRAY(C.religions) THEN C.religions
+         ELSE [C.religions] END AS R
+GROUP BY R.`#text`
+ORDER BY num_countries DESC;
+
+/*
+runtime: 0.817 seconds
+
+output cardinality: 37
+
+output:
+{ "num_countries": 104, "religion": "Roman Catholic" }
+{ "num_countries": 98, "religion": "Muslim" }
+{ "num_countries": 67, "religion": "Protestant" }
+{ "num_countries": 57, "religion": "Christian" }
+{ "num_countries": 22, "religion": "Christian Orthodox" }
+{ "num_countries": 16, "religion": "Anglican" }
+{ "num_countries": 15, "religion": "Buddhist" }
+{ "num_countries": 14, "religion": "Hindu" }
+{ "num_countries": 13, "religion": "Jewish" }
+{ "num_countries": 7, "religion": "Seventh-Day Adventist" }
+{ "num_countries": 5, "religion": "Baptist" }
+{ "num_countries": 4, "religion": "Methodist" }
+{ "num_countries": 3, "religion": "Presbyterian" }
+{ "num_countries": 3, "religion": "Church of God" }
+{ "num_countries": 2, "religion": "Mormon" }
+{ "num_countries": 2, "religion": "United Church" }
+{ "num_countries": 2, "religion": "Bahai" }
+{ "num_countries": 1, "religion": "Christian Congregationalist" }
+{ "num_countries": 1, "religion": "Church Tuvalu" }
+{ "num_countries": 1, "religion": "Confucianism" }
+{ "num_countries": 1, "religion": "Coptic Christian" }
+{ "num_countries": 1, "religion": "Druze" }
+{ "num_countries": 1, "religion": "Ekalesia Niue" }
+{ "num_countries": 1, "religion": "Jains" }
+{ "num_countries": 1, "religion": "Judaism" }
+{ "num_countries": 1, "religion": "Pentecostal" }
+{ "num_countries": 1, "religion": "Sikh" }
+{ "num_countries": 1, "religion": "Taoist" }
+{ "num_countries": 1, "religion": "African Methodist Episcopal" }
+{ "num_countries": 1, "religion": "Armenian Apostolic" }
+{ "num_countries": 1, "religion": "Chondogyo" }
+{ "num_countries": 1, "religion": "Church Christ" }
+{ "num_countries": 1, "religion": "Episcopalian" }
+{ "num_countries": 1, "religion": "Evangelical Alliance" }
+{ "num_countries": 1, "religion": "Kimbanguist" }
+{ "num_countries": 1, "religion": "United" }
+{ "num_countries": 1, "religion": "Uniting Church Australia" } 
+*/
+
+/*
+SELECT DISTINCT C.religions.`#text` AS religion,  count(C.name) AS num_countries
+FROM geo.world AS W, W.mondial.country AS C
+LET R = (CASE WHEN C.religions IS MISSING THEN []
+                                 WHEN IS_ARRAY(C.religions) THEN C.religions
+                                  ELSE [C.religions] END)
+GROUP BY R.`#text`
+ORDER BY num_countries DESC;
+*/

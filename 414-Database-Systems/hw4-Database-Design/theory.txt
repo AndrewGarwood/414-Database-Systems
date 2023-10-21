@@ -1,0 +1,55 @@
+HW4 PART 3
+
+a. (10 points) R(A,B,C,D,E) with functional dependencies D → B, CE → A.
+
+b. (10 points) S(A,B,C,D,E) with functional dependencies A → E, BC → A, DE → B.
+
+For each of the above schemas, decompose it into BCNF. Show all of your work and explain, 
+at each step, which dependency violations you are correcting. Make sure you describe each 
+step in your decomposition steps. (10 points each)
+
+
+-- Decomposition for a. R(A,B,C,D,E) with functional dependencies D → B, CE → A.
+
+Using the BCNF algorithm, we start with R(A,B,C,D,E). Looking at the given functional dependencies
+let's start with D from D -> B. We see that the closure of D is not itself nor is it all the 
+elements in R, so we have to decompose. I will split on D.
+
+Now we have R1(D, B) and R2(D, A, C, E). R1 is in BCNF because each element in R1 has a closure of
+itself or all the elements in R1. R2 is not in BCNF because we found set CE whose closure is not 
+itself nor is it all of R2. Using the given FD CE -> A, we will split onCE.
+
+Now we have R1(D, B) R3(C, E, A) and R4(D, C, E). All of these relations are in BCNF so we finished.
+
+-- Decomposition for b. S(A,B,C,D,E) with functional dependencies A → E, BC → A, DE → B. 
+
+Using the BCNF algorithm, we start with S(A,B,C,D,E). Looking at the given functional dependencies
+let's start with A from A -> E. We see that the closure of A is not itself nor is it all the 
+elements in S, so we have to decompose. I will split on A.
+
+Now we have S1(A, E) and S2(A, B, C, D). S1 is in BCNF because every element in S1 has a closure 
+of itself or every element in S1. S2 is not in BCNF Look at the next FD BC -> A. BC has a closure
+that is not itself nor is it every element in S2. So we split on BC.
+
+Now we have S1(A, E), S3(B, C, A) and S4(B, C, D). These are in BCNF so we are done.
+
+---------------
+
+A set of attributes X is called closed (with respect to a given set of functional dependencies) if 
+X⁺ = X. Consider a relation with schema R(A,B,C,D) and an unknown set of functional dependencies. 
+For each closed attribute set below, give a set of functional dependencies that is consistent 
+with it.
+
+c. (5 points) All subsets of {A,B,C,D} are closed.
+	∅ = {}  = the empty set = No functional dependencies
+	
+d. (5 points) The only closed subsets of {A,B,C,D} are {} and {A,B,C,D}.
+	A -> B, B -> C, C -> D, D -> A. {A -> B, B -> C, C -> D, D -> A}
+
+e. (5 points) The only closed subsets of {A,B,C,D} are {}, {B,C}, and {A,B,C,D}.
+	B -> C, C -> B, A -> D, D -> B, A. {B -> C, C -> B, A -> D, D -> B, A}
+
+* I checked all 16 subsets on a scratch piece of paper so hopefully I checked correctly.
+
+
+

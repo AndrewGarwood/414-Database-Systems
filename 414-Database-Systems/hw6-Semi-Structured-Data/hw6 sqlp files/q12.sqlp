@@ -1,0 +1,62 @@
+q12
+
+/*
+12.
+Modify the query from 11. to return, for each pair of countries, the list of common mountains, 
+and the list of common seas. Name your output attributes first_country, second_country, mountains, 
+seas. [Result Size: 7 rows of {"mountains":[{"mountain":...}, ...], "seas":[{"sea":...}, ...], 
+"first_country":..., "second_country":...}]
+*/
+
+SELECT DISTINCT C1.name AS first_country, C2.name AS second_country, mountains, seas 
+
+FROM geoindex.country AS C1, 
+     geoindex.country AS C2
+
+LET 
+mountains = 
+	(SELECT DISTINCT M.name AS mountain
+	 FROM geoindex.mountain AS M, 
+     	split(M.`-country`, " ") AS MCid1, 
+ 	    split(M.`-country`, " ") AS MCid2
+     WHERE C1.`-car_code` = MCid1 AND C2.`-car_code` = MCid2),
+
+seas = 
+	(SELECT DISTINCT S.name AS sea
+	 FROM geoindex.sea AS S, 
+     	split(S.`-country`, " ") AS SCid1, 
+	 	split(S.`-country`, " ") AS SCid2 
+ 	 WHERE C1.`-car_code` = SCid1 AND C2.`-car_code` = SCid2)	 
+	 	 
+WHERE C1.`-car_code` > C2.`-car_code`
+AND ARRAY_LENGTH(mountains) > 0
+AND ARRAY_LENGTH(seas) > 0;
+
+/*
+-- without checking the length of these two arrays, the query produces a bunch of empty ones which
+   is not desired
+
+-- SELECTING the list of shared mountains/seas requires subqueries; before we only checked for 
+   their existence and did not need to select them. So we rearrange conditional statements from 
+   previous query
+
+-- I thought about the possibility ot doing the subqueries in the initial SELECT statement but I
+   think using the LET keyword is more elegant.
+
+-- similar artificial unnesting + joins logic applies here, only it's more modular I believe
+*/
+
+/*
+runtime: 0.686
+
+output cardinality: 7
+
+output:
+{ "mountains": [ { "mountain": "Kasbek" } ], "seas": [ { "sea": "Black Sea" } ], "first_country": "Russia", "second_country": "Georgia" }
+{ "mountains": [ { "mountain": "Sulitjelma" } ], "seas": [ { "sea": "Skagerrak" } ], "first_country": "Sweden", "second_country": "Norway" }
+{ "mountains": [ { "mountain": "Llullaillaco" }, { "mountain": "Ojos del Salado" } ], "seas": [ { "sea": "Atlantic Ocean" } ], "first_country": "Chile", "second_country": "Argentina" }
+{ "mountains": [ { "mountain": "Mont Blanc" } ], "seas": [ { "sea": "Mediterranean Sea" } ], "first_country": "Italy", "second_country": "France" }
+{ "mountains": [ { "mountain": "Changbai Shan" } ], "seas": [ { "sea": "Yellow Sea" } ], "first_country": "China", "second_country": "North Korea" }
+{ "mountains": [ { "mountain": "Vignemale" } ], "seas": [ { "sea": "Atlantic Ocean" }, { "sea": "Mediterranean Sea" } ], "first_country": "France", "second_country": "Spain" }
+{ "mountains": [ { "mountain": "Mt Bona" }, { "mountain": "Mt St.Elias" }, { "mountain": "Mt Fairweather" } ], "seas": [ { "sea": "Arctic Ocean" }, { "sea": "Pacific Ocean" }, { "sea": "Atlantic Ocean" } ], "first_country": "United States", "second_country": "Canada" }
+*/

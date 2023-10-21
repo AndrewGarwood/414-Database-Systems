@@ -1,0 +1,53 @@
+q1
+
+/*
+1. 
+Retrieve the names of all cities located in Peru, sorted alphabetically. Name your output attribute 
+city. [Result Size: 30 rows of {"city":...}]
+*/
+
+SELECT T.name AS city
+FROM geo.world AS W, W.mondial.country AS C, C.province AS P,
+CASE WHEN IS_ARRAY(P.city) THEN P.city
+     WHEN P.city IS MISSING THEN []
+     ELSE [P.city] END AS T
+WHERE C.name = "Peru"
+ORDER BY T.name;
+
+/* 
+runtime: 0.226 seconds
+
+output cardinality: 30
+
+output:
+{ "city": "Abancay" }
+{ "city": "Arequipa" }
+{ "city": "Ayacucho" }
+{ "city": "Cajamarca" }
+{ "city": "Callao" }
+{ "city": "Cerro de Pasco" }
+{ "city": "Chachapoyas" }
+{ "city": "Chiclayo" }
+{ "city": "Chimbote" }
+{ "city": "Chincha Alta" }
+{ "city": "Cuzco" }
+{ "city": "Huancavelica" }
+{ "city": "Huancayo" }
+{ "city": "Huanuco" }
+{ "city": "Huaraz" }
+{ "city": "Ica" }
+{ "city": "Iquitos" }
+{ "city": "Juliaca" }
+{ "city": "Lima" }
+{ "city": "Moquegua" }
+{ "city": "Moyobamba" }
+{ "city": "Piura" }
+{ "city": "Pucallpa" }
+{ "city": "Puerto Maldonado" }
+{ "city": "Puno" }
+{ "city": "Sullana" }
+{ "city": "Tacna" }
+{ "city": "Talara" }
+{ "city": "Trujillo" }
+{ "city": "Tumbes" }
+*/

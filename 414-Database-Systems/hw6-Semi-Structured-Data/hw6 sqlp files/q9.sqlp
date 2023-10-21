@@ -1,0 +1,58 @@
+q9
+
+/*
+9.
+For this query you should also measure and report the runtime; it may be approximate 
+(warning: it might run for a while). Find all distinct pairs of countries that share both a 
+mountain and a sea. Your query should return a list of pairs of country names. Avoid including a 
+country with itself, like in (France,France), and avoid listing both (France,Korea) and 
+(Korea,France) (not a real answer). Name your output attributes first_country, second_country. 
+[Result Size: 7 rows of {"first_country":..., "second_country":...}]
+*/
+
+
+SELECT DISTINCT C1.name AS first_country, C2.name AS second_country
+FROM geo.world AS W, 
+	 W.mondial.country AS C1, 
+	 W.mondial.country AS C2, 
+	 W.mondial.mountain AS M, 
+	 	split(M.`-country`, " ") AS MCid1, 
+	 	split(M.`-country`, " ") AS MCid2, 
+	 W.mondial.sea AS S, 
+	 	split(S.`-country`, " ") AS SCid1, 
+	 	split(S.`-country`, " ") AS SCid2 
+	 
+WHERE C1.`-car_code` > C2.`-car_code` 
+AND C1.`-car_code` = MCid1 
+AND C1.`-car_code` = SCid1 
+AND C2.`-car_code` = MCid2
+AND C2.`-car_code` = SCid2;
+
+/* me going through my thought process
+-- Using != when comparing C1 and C2 resulted in 14 rows. i.e. has redundant cases like 
+   (A, B), (B, A). I believe > and < would both work, so one can choose arbitrarily 
+
+-- The artificial nesting contained in mountain's M.`-country` (and sea's S.`-country) is unnested 
+   with the split statements.
+
+-- my thinking was that splitting twice acts as a self join and facilitates checks to see which
+   countries contain the current mountain/sea being split on. My understanding is that 2 
+   separate unnests/checks is necessary because having only 1 could result in country1 = country2.
+   I think by transitive property C1.code = MCid && C2.code = MCid => C1.code = M2.code. yea
+
+*/
+
+/*
+runtime: 563.446 seconds
+
+output cardinality: 7
+
+output:
+{ "first_country": "France", "second_country": "Spain" }
+{ "first_country": "Sweden", "second_country": "Norway" }
+{ "first_country": "Russia", "second_country": "Georgia" }
+{ "first_country": "China", "second_country": "North Korea" }
+{ "first_country": "United States", "second_country": "Canada" }
+{ "first_country": "Italy", "second_country": "France" }
+{ "first_country": "Chile", "second_country": "Argentina" }
+*/
